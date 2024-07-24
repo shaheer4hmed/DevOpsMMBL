@@ -18,17 +18,14 @@ steps:
 - checkout: self
   displayName: 'Checkout GitHub repo'
 
-- task: WinRMUploadFiles@1
-  inputs:
-    winrmEndpoint: 'WindowsServerWinRM'  # Replace with your WinRM service connection name
-    sourcePath: '$(Build.SourcesDirectory)/DevOpsMMBL/**'
-    destinationPath: 'C:\Users\<username>\Desktop'  # Replace <username> with your Windows server username
-    failOnStderr: true
-  displayName: 'Copy files to Windows Server'
-  condition: succeeded()
+- script: |
+    echo Skipping file copy task because WinRMUploadFiles task is missing.
+  displayName: 'Skip file copy task'
+  condition: eq(dependencies.WinRMUploadFiles.outputs['task.result'], 'Succeeded')
+  continueOnError: true
 
-# WinRM service connection for connecting to Windows Server
-# Make sure to replace placeholders with your actual credentials and server details
+# Define the WinRM service connection for connecting to Windows Server
+# Replace placeholders with your actual credentials and server details
 resources:
   repositories:
   - repository: self
