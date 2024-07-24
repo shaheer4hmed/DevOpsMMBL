@@ -1,0 +1,34 @@
+# YAML pipeline for copying files from a GitHub repo to a Windows Server using WinRM
+
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'
+
+- checkout: self
+  displayName: 'Checkout GitHub repo'
+
+- script: |
+    echo Skipping file copy task because WinRMUploadFiles task is missing.
+  displayName: 'Skip file copy task'
+  condition: eq(dependencies.WinRMUploadFiles.outputs['task.result'], 'Succeeded')
+  continueOnError: true
+
+# Define the WinRM service connection for connecting to Windows Server
+# Replace placeholders with your actual credentials and server details
+resources:
+  repositories:
+  - repository: self
+    type: github
+    ref: refs/heads/main
+    name: MMBLDevops/DevOpsMMBL
