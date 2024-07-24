@@ -1,0 +1,56 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- main
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'# YAML pipeline for copying files from a GitHub repo to a Windows Server using WinRM
+
+trigger:
+- main
+
+pool:
+  vmImage: 'windows-latest'
+
+steps:
+- script: echo Hello, world!
+  displayName: 'Run a one-line script'
+
+- script: |
+    echo Add other tasks to build, test, and deploy your project.
+    echo See https://aka.ms/yaml
+  displayName: 'Run a multi-line script'
+
+- checkout: self
+  displayName: 'Checkout GitHub repo'
+
+- task: WinRMUploadFiles@1
+  inputs:
+    winrmEndpoint: 'WindowsServerWinRM'  # Replace with your WinRM service connection name
+    sourcePath: '$(Build.SourcesDirectory)/DevOpsMMBL/**'
+    destinationPath: 'C:\Users\<username>\Desktop'  # Replace <username> with your Windows server username
+    failOnStderr: true
+  displayName: 'Copy files to Windows Server'
+  condition: succeeded()
+
+# WinRM service connection for connecting to Windows Server
+# Make sure to replace placeholders with your actual credentials and server details
+resources:
+  repositories:
+  - repository: self
+    type: github
+    ref: refs/heads/main
+    name: MMBLDevops/DevOpsMMBL
+
